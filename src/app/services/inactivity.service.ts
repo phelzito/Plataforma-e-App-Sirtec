@@ -1,30 +1,41 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
-import { Subscription, interval } from 'rxjs';
+import { AuthService } from './auth.service';
+import { Subject, Subscription, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InactivityService {
-  private inactivityTimer: Subscription;
-  private readonly inactivityPeriod = 30 * 60 * 1000; // 30 minutos
+  private timeout = 300;
+  private timeoutSubscription: Subscription;
+  private timer$ = timer(this.timeout * 1000);
+  private unsubscribe$ = new Subject();
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  startInactivityTimer() {
-    this.inactivityTimer = interval(this.inactivityPeriod).subscribe(() => {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-    });
+  start() {
+    this.timeoutSubscription = this.timer$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      });
   }
 
-  stopInactivityTimer() {
-    if (this.inactivityTimer) {
-      this.inactivityTimer.unsubscribe();
+  reset() {
+    if (this.timeoutSubscription) {
+      this.timeoutSubscription.unsubscribe();
     }
+    this.start();
+  }
+
+  stop() {
+    if (this.timeoutSubscription) {
+      this.timeoutSubscription.unsubscribe();
+    }
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

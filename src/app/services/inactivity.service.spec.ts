@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { ContentService } from './content.service';
+import { InactivityService } from './inactivity.service';
 
-describe('ContentService', () => {
-  let service: ContentService;
+describe('InactivityService', () => {
+  let service: InactivityService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ContentService);
+    service = TestBed.inject(InactivityService);
   });
 
   it('should be created', () => {

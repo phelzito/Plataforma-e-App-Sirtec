@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,40 +9,18 @@ export class ActivityService {
   private supabase: SupabaseClient;
 
   constructor() {
-    this.supabase = createClient(
-      environment.supabaseUrl,
-      environment.supabaseKey
-    );
+    this.supabase = createClient(process.env['VITE_SUPABASE_URL']!, process.env['VITE_SUPABASE_ANON_KEY']!);
   }
 
-  async logActivity(action: string, details: Record<string, any> = {}) {
-    const { data: { user } } = await this.supabase.auth.getUser();
-    
-    if (!user) return;
-
-    const { error } = await this.supabase
-      .from('activity_log')
-      .insert({
-        user_id: user.id,
-        action,
-        details: JSON.stringify(details),
-        ip_address: '', // Adicionar captura de IP
-        user_agent: navigator.userAgent
-      });
+  async logActivity(userId: string, activityType: string): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('activities')
+      .insert([{ user_id: userId, activity_type: activityType }]);
 
     if (error) {
-      console.error('Erro ao registrar atividade:', error);
+      throw error;
     }
-  }
 
-  async getRecentActivities(limit = 100) {
-    const { data, error } = await this.supabase
-      .from('activity_log')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(limit);
-
-    if (error) throw error;
     return data;
   }
 }

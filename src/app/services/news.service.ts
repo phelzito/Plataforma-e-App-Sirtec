@@ -1,22 +1,27 @@
-// Adicionar filtro por unidade nos métodos
-getNewsByUnit(unit: string) {
-  return this.supabase
-    .from('news')
-    .select('*')
-    .eq('unit', unit)
-    .order('created_at', { ascending: false });
-}
+import { Injectable } from '@angular/core';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { BehaviorSubject } from 'rxjs';
 
-createNews(newsData: any) {
-  return this.supabase
-    .from('news')
-    .insert([{ ...newsData, unit: newsData.unit }]);
-}
+@Injectable({
+  providedIn: 'root'
+})
+export class NewsService {
+  private supabase: SupabaseClient;
 
-updateNews(id: string, newsData: any) {
-  return this.supabase
-    .from('news')
-    .update(newsData)
-    .eq('id', id)
-    .eq('unit', newsData.unit); // Garantir que só atualize da mesma unidade
+  constructor() {
+    this.supabase = createClient(process.env['VITE_SUPABASE_URL']!, process.env['VITE_SUPABASE_ANON_KEY']!);
+  }
+
+  async getNewsByUnit(unit: string): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('news')
+      .select('*')
+      .eq('unit', unit);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
 }

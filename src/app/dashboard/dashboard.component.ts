@@ -1,23 +1,40 @@
-// Injetar AuthService no construtor
-constructor(private authService: AuthService) {}
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { NewsService } from '../services/news.service';
+import { DocumentService } from '../services/document.service';
 
-// Adicionar método para carregar as informações com base na unidade
-ngOnInit() {
-  const userUnit = this.authService.getUserUnit();
-  this.loadNews(userUnit);
-  this.loadDocuments(userUnit);
-}
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
+})
+export class DashboardComponent implements OnInit {
+  news: any[] = [];
+  documents: any[] = [];
 
-loadNews(unit: string) {
-  this.newsService.getNewsByUnit(unit).subscribe({
-    next: (data) => this.news = data,
-    error: (error) => console.error(error)
-  });
-}
+  constructor(
+    private authService: AuthService,
+    private newsService: NewsService,
+    private documentService: DocumentService
+  ) {}
 
-loadDocuments(unit: string) {
-  this.documentService.getDocumentsByUnit(unit).subscribe({
-    next: (data) => this.documents = data,
-    error: (error) => console.error(error)
-  });
+  ngOnInit() {
+    const userUnit = this.authService.getUserUnit();
+    this.loadNews(userUnit);
+    this.loadDocuments(userUnit);
+  }
+
+  loadNews(unit: string) {
+    this.newsService.getNewsByUnit(unit).subscribe({
+      next: (data) => this.news = data,
+      error: (error) => console.error(error)
+    });
+  }
+
+  loadDocuments(unit: string) {
+    this.documentService.getDocumentsByUnit(unit).subscribe({
+      next: (data) => this.documents = data,
+      error: (error) => console.error(error)
+    });
+  }
 }

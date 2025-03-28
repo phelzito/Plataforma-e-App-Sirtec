@@ -1,32 +1,23 @@
-# Enterprise Communication App
+# Project Name
 
-## Configuração
+## Description
+This project is a web application built with Angular and Supabase.
 
-1. **Instalação**:
-   ```bash
-   npm install
-   ```
+## Features
+- User authentication
+- Dashboard with news and documents
+- Activity logging
+- Report generation
 
-2. **Variáveis de Ambiente**:
-   Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
-   ```
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+## Installation
+1. Clone the repository
+2. Run `npm install`
+3. Create `.env` file with Supabase credentials
+4. Run `npm start` for development server
 
-3. **Execução**:
-   ```bash
-   npm start
-   ```
+## Testing
+Run `npm test` to execute unit tests
 
-## Uso
-
-- **Login**: Acesse `/login` para fazer login.
-- **Dashboard**: Acesse `/dashboard` para ver as métricas e gráficos.
-
-## Testes
-
-Para executar os testes:
-```bash
-npm test
-```
+## Deployment
+1. Build the project with `npm run build`
+2. Deploy the generated files in `dist` folder

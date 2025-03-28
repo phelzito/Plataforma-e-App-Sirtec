@@ -1,31 +1,27 @@
-// Adicionar filtro por unidade nos métodos
-getDocumentsByUnit(unit: string) {
-  return this.supabase
-    .from('documents')
-    .select('*')
-    .eq('unit', unit)
-    .order('created_at', { ascending: false });
-}
+import { Injectable } from '@angular/core';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { BehaviorSubject } from 'rxjs';
 
-createDocument(formData: FormData) {
-  return this.supabase
-    .from('documents')
-    .insert([{ 
-      title: formData.get('title'),
-      description: formData.get('description'),
-      unit: formData.get('unit'),
-      file_path: formData.get('file') 
-    }]);
-}
+@Injectable({
+  providedIn: 'root'
+})
+export class DocumentService {
+  private supabase: SupabaseClient;
 
-updateDocument(id: string, formData: FormData) {
-  return this.supabase
-    .from('documents')
-    .update({
-      title: formData.get('title'),
-      description: formData.get('description'),
-      file_path: formData.get('file')
-    })
-    .eq('id', id)
-    .eq('unit', formData.get('unit')); // Garantir que só atualize da mesma unidade
+  constructor() {
+    this.supabase = createClient(process.env['VITE_SUPABASE_URL']!, process.env['VITE_SUPABASE_ANON_KEY']!);
+  }
+
+  async getDocumentsByUnit(unit: string): Promise<any> {
+    const { data, error } = await this.supabase
+      .from('documents')
+      .select('*')
+      .eq('unit', unit);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
 }
