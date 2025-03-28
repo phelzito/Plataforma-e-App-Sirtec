@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  <div class="header">
+    <h1>Dashboard</h1>
+    
+    <div class="search-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Pesquisar</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
+        <button matSuffix mat-icon-button (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div class="content">
+    <app-news-list></app-news-list>
+    <app-document-list></app-document-list>
+  </div>
+
+  <div class="pagination-controls">
+    <button mat-button (click)="previousPage()" [disabled]="currentPage === 1">
+      Anterior
+    </button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button mat-button (click)="nextPage()" [disabled]="currentPage === totalPages">
+      Próxima
+    </button>
+  </div>
+</div>

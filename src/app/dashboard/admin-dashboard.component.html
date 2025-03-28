@@ -1,0 +1,50 @@
+<div class="admin-dashboard">
+  <h1>Dashboard Administrativo</h1>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <div class="metrics-grid">
+      <div class="metric-card" *ngFor="let metric of metrics | keyvalue">
+        <h2>Total de {{ metric.key | titlecase }}</h2>
+        <p>{{ metric.value }}</p>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="metricsChart"></canvas>
+    </div>
+
+    <div class="activity-logs">
+      <h2>Últimas Atividades</h2>
+      <mat-table [dataSource]="activityLogs">
+        <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef>Ação</mat-header-cell>
+          <mat-cell *matCellDef="let log">{{ log.action }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="details">
+          <mat-header-cell *matHeaderCellDef>Detalhes</mat-header-cell>
+          <mat-cell *matCellDef="let log">{{ log.details | json }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="created_at">
+          <mat-header-cell *matHeaderCellDef>Data</mat-header-cell>
+          <mat-cell *matCellDef="let log">{{ log.created_at | date:'short' }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="['action', 'details', 'created_at']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['action', 'details', 'created_at'];"></mat-row>
+      </mat-table>
+    </div>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="exportData()">
+        <mat-icon>download</mat-icon>
+        Exportar Dados
+      </button>
+    </div>
+  </div>
+</div>
